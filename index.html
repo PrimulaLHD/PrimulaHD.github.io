@@ -1,0 +1,121 @@
+<!doctype html>
+<!-- The Time Machine GitHub pages theme was designed and developed by Jon Rohan, on Feb 7, 2012. -->
+<!-- Follow him for fun. http://twitter.com/jonrohan. Tail his code on https://github.com/jonrohan -->
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+
+  <link rel="stylesheet" href="stylesheets/stylesheet.css" media="screen">
+  <link rel="stylesheet" href="stylesheets/github-dark.css">
+  <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js"></script>
+  <script type="text/javascript" src="javascripts/script.js"></script>
+
+  <title>使用ggplot2画barplot</title>
+  <meta name="description" content="Hai-Dong ">
+
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+
+</head>
+
+<body>
+
+  <div class="wrapper">
+    <header>
+      <h1 class="title">使用ggplot2画barplot</h1>
+    </header>
+    <div id="container">
+      <p class="tagline">Hai-Dong </p>
+      <div id="main" role="main">
+        <div class="download-bar">
+        <div class="inner">
+          <a href="https://github.com/PrimulaLHD/PrimulaHD.github.io/tarball/master" class="download-button tar"><span>Download</span></a>
+          <a href="https://github.com/PrimulaLHD/PrimulaHD.github.io/zipball/master" class="download-button zip"><span>Download</span></a>
+          <a href="https://github.com/PrimulaLHD/PrimulaHD.github.io" class="code">View 使用ggplot2画barplot on GitHub</a>
+        </div>
+        <span class="blc"></span><span class="trc"></span>
+        </div>
+        <article class="markdown-body">
+          <h1>
+<a id="计算均值标准差标准误95的置信区间的函数" class="anchor" href="#%E8%AE%A1%E7%AE%97%E5%9D%87%E5%80%BC%E6%A0%87%E5%87%86%E5%B7%AE%E6%A0%87%E5%87%86%E8%AF%AF95%E7%9A%84%E7%BD%AE%E4%BF%A1%E5%8C%BA%E9%97%B4%E7%9A%84%E5%87%BD%E6%95%B0" aria-hidden="true"><span class="octicon octicon-link"></span></a>计算均值、标准差、标准误、95%的置信区间的函数</h1>
+
+<p>代码来自<a href="http://www.cookbook-r.com/Graphs/Plotting_means_and_error_bars_(ggplot2)/"><strong>R Cookbook</strong></a></p>
+
+<div class="highlight highlight-source-r"><pre><span class="pl-c"># the funtion summarySE() can return the mean, sd, se, and 95% ci of variable</span>
+<span class="pl-en">summarySE</span> <span class="pl-k">&lt;-</span> <span class="pl-k">function</span>(<span class="pl-v">data</span><span class="pl-k">=</span><span class="pl-c1">NULL</span>, <span class="pl-smi">measurevar</span>, <span class="pl-v">groupvars</span><span class="pl-k">=</span><span class="pl-c1">NULL</span>, <span class="pl-v">na.rm</span><span class="pl-k">=</span><span class="pl-c1">FALSE</span>,
+        <span class="pl-v">conf.interval</span><span class="pl-k">=</span>.<span class="pl-c1">95</span>, <span class="pl-v">.drop</span><span class="pl-k">=</span><span class="pl-c1">TRUE</span>) {
+library(<span class="pl-smi">plyr</span>)
+<span class="pl-c"># New version of length which can handle NA's: if na.rm==T, don't count them</span>
+<span class="pl-en">length2</span> <span class="pl-k">&lt;-</span> <span class="pl-k">function</span> (<span class="pl-smi">x</span>, <span class="pl-v">na.rm</span><span class="pl-k">=</span><span class="pl-c1">FALSE</span>) {
+        <span class="pl-k">if</span> (<span class="pl-smi">na.rm</span>) sum(<span class="pl-k">!</span>is.na(<span class="pl-smi">x</span>))
+        <span class="pl-k">else</span>       length(<span class="pl-smi">x</span>)
+}
+<span class="pl-c"># This does the summary. For each group's data frame, return a vector with</span>
+<span class="pl-c"># N, mean, and sd</span>
+<span class="pl-smi">datac</span> <span class="pl-k">&lt;-</span> ddply(<span class="pl-smi">data</span>, <span class="pl-smi">groupvars</span>, <span class="pl-v">.drop</span><span class="pl-k">=</span>.<span class="pl-smi">drop</span>,
+<span class="pl-v">.fun</span> <span class="pl-k">=</span> <span class="pl-k">function</span>(<span class="pl-smi">xx</span>, <span class="pl-smi">col</span>) {
+        c(<span class="pl-v">N</span>    <span class="pl-k">=</span> length2(<span class="pl-smi">xx</span>[[<span class="pl-smi">col</span>]], <span class="pl-v">na.rm</span><span class="pl-k">=</span><span class="pl-smi">na.rm</span>),
+        <span class="pl-v">mean</span> <span class="pl-k">=</span> mean   (<span class="pl-smi">xx</span>[[<span class="pl-smi">col</span>]], <span class="pl-v">na.rm</span><span class="pl-k">=</span><span class="pl-smi">na.rm</span>),
+        <span class="pl-v">sd</span>   <span class="pl-k">=</span> sd     (<span class="pl-smi">xx</span>[[<span class="pl-smi">col</span>]], <span class="pl-v">na.rm</span><span class="pl-k">=</span><span class="pl-smi">na.rm</span>)
+        )
+},
+<span class="pl-smi">measurevar</span>
+)
+<span class="pl-c"># Rename the "mean" column</span>
+<span class="pl-smi">datac</span> <span class="pl-k">&lt;-</span> rename(<span class="pl-smi">datac</span>, c(<span class="pl-s"><span class="pl-pds">"</span>mean<span class="pl-pds">"</span></span> <span class="pl-k">=</span> <span class="pl-smi">measurevar</span>))
+<span class="pl-smi">datac</span><span class="pl-k">$</span><span class="pl-smi">se</span> <span class="pl-k">&lt;-</span> <span class="pl-smi">datac</span><span class="pl-k">$</span><span class="pl-smi">sd</span> <span class="pl-k">/</span> sqrt(<span class="pl-smi">datac</span><span class="pl-k">$</span><span class="pl-smi">N</span>)  <span class="pl-c"># Calculate standard error of the mean</span>
+<span class="pl-c"># Confidence interval multiplier for standard error</span>
+<span class="pl-c"># Calculate t-statistic for confidence interval:</span>
+<span class="pl-c"># e.g., if conf.interval is .95, use .975 (above/below), and use df=N-1</span>
+<span class="pl-smi">ciMult</span> <span class="pl-k">&lt;-</span> qt(<span class="pl-smi">conf.interval</span><span class="pl-k">/</span><span class="pl-c1">2</span> <span class="pl-k">+</span> .<span class="pl-c1">5</span>, <span class="pl-smi">datac</span><span class="pl-k">$</span><span class="pl-smi">N</span><span class="pl-k">-</span><span class="pl-c1">1</span>)
+<span class="pl-smi">datac</span><span class="pl-k">$</span><span class="pl-smi">ci</span> <span class="pl-k">&lt;-</span> <span class="pl-smi">datac</span><span class="pl-k">$</span><span class="pl-smi">se</span> <span class="pl-k">*</span> <span class="pl-smi">ciMult</span>
+<span class="pl-k">return</span>(<span class="pl-smi">datac</span>)
+}</pre></div>
+
+<h1>
+<a id="准备数据" class="anchor" href="#%E5%87%86%E5%A4%87%E6%95%B0%E6%8D%AE" aria-hidden="true"><span class="octicon octicon-link"></span></a>准备数据</h1>
+
+<div class="highlight highlight-source-r"><pre>setwd(<span class="pl-s"><span class="pl-pds">"</span>D:/Dataset/Distyly_syndrom<span class="pl-pds">"</span></span>)
+<span class="pl-smi">Traits</span> <span class="pl-k">&lt;-</span> read.csv(<span class="pl-s"><span class="pl-pds">"</span>Traits.csv<span class="pl-pds">"</span></span>) <span class="pl-c"># read data</span>
+<span class="pl-smi">CW_mean</span> <span class="pl-k">&lt;-</span> summarySE(<span class="pl-smi">Traits</span>, <span class="pl-v">measurevar</span><span class="pl-k">=</span><span class="pl-s"><span class="pl-pds">"</span>CW<span class="pl-pds">"</span></span>, <span class="pl-v">groupvars</span><span class="pl-k">=</span>c(<span class="pl-s"><span class="pl-pds">"</span>Morph<span class="pl-pds">"</span></span>,<span class="pl-s"><span class="pl-pds">"</span>Species<span class="pl-pds">"</span></span>)) <span class="pl-c"># calculate mean and se/sd/ci using function</span></pre></div>
+
+<h1>
+<a id="用ggplot2画barplot" class="anchor" href="#%E7%94%A8ggplot2%E7%94%BBbarplot" aria-hidden="true"><span class="octicon octicon-link"></span></a>用ggplot2画barplot</h1>
+
+<div class="highlight highlight-source-r"><pre>library(<span class="pl-smi">ggplot2</span>)
+<span class="pl-smi">pd</span> <span class="pl-k">&lt;-</span> position_dodge(<span class="pl-c1">0.1</span>) <span class="pl-c"># move them .05 to the left and right</span>
+ggplot(<span class="pl-smi">CW_mean</span>, aes(<span class="pl-v">x</span><span class="pl-k">=</span> <span class="pl-smi">Species</span>, <span class="pl-v">y</span><span class="pl-k">=</span><span class="pl-smi">CW</span>, <span class="pl-v">fill</span><span class="pl-k">=</span><span class="pl-smi">Morph</span>)) <span class="pl-k">+</span>
+geom_bar(<span class="pl-v">position</span><span class="pl-k">=</span>position_dodge(.<span class="pl-c1">9</span>), <span class="pl-v">colour</span><span class="pl-k">=</span><span class="pl-s"><span class="pl-pds">"</span>black<span class="pl-pds">"</span></span>,
+        <span class="pl-v">stat</span><span class="pl-k">=</span><span class="pl-s"><span class="pl-pds">"</span>identity<span class="pl-pds">"</span></span>) <span class="pl-k">+</span>
+geom_errorbar(<span class="pl-v">position</span><span class="pl-k">=</span>position_dodge(.<span class="pl-c1">9</span>), <span class="pl-v">width</span><span class="pl-k">=</span>.<span class="pl-c1">25</span>,
+        aes(<span class="pl-v">ymin</span><span class="pl-k">=</span><span class="pl-smi">CW</span><span class="pl-k">-</span><span class="pl-smi">sd</span>, <span class="pl-v">ymax</span><span class="pl-k">=</span><span class="pl-smi">CW</span><span class="pl-k">+</span><span class="pl-smi">sd</span>)) <span class="pl-k">+</span>
+coord_cartesian(<span class="pl-v">ylim</span><span class="pl-k">=</span>c(<span class="pl-c1">0</span>,<span class="pl-c1">30</span>)) <span class="pl-k">+</span>
+scale_fill_manual(<span class="pl-v">values</span><span class="pl-k">=</span>c(<span class="pl-s"><span class="pl-pds">"</span>#CCCCCC<span class="pl-pds">"</span></span>,<span class="pl-s"><span class="pl-pds">"</span>#FFFFFF<span class="pl-pds">"</span></span>)) <span class="pl-k">+</span>
+theme_bw() <span class="pl-k">+</span>
+geom_hline(<span class="pl-v">yintercept</span><span class="pl-k">=</span><span class="pl-c1">38</span>)</pre></div>
+
+<p>输出图形如下：<br>
+<img alt="cw"></p>
+        </article>
+      </div>
+    </div>
+    <footer>
+      <div class="owner">
+      <p><a href="https://github.com/PrimulaLHD" class="avatar"><img src="https://avatars3.githubusercontent.com/u/16362131?v=3&amp;s=60" width="48" height="48"></a> <a href="https://github.com/PrimulaLHD">PrimulaLHD</a> maintains <a href="https://github.com/PrimulaLHD/PrimulaHD.github.io">使用ggplot2画barplot</a></p>
+
+
+      </div>
+      <div class="creds">
+        <small>This page generated using <a href="https://pages.github.com/">GitHub Pages</a><br>theme by <a href="https://twitter.com/jonrohan/">Jon Rohan</a></small>
+      </div>
+    </footer>
+  </div>
+  <div class="current-section">
+    <a href="#top">Scroll to top</a>
+    <a href="https://github.com/PrimulaLHD/PrimulaHD.github.io/tarball/master" class="tar">tar</a><a href="https://github.com/PrimulaLHD/PrimulaHD.github.io/zipball/master" class="zip">zip</a><a href="" class="code">source code</a>
+    <p class="name"></p>
+  </div>
+
+  
+</body>
+</html>
